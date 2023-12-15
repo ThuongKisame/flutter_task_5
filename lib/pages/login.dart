@@ -1,5 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_task_5/components/myCheckBox.dart';
+import 'package:flutter_task_5/pages/register_page.dart';
 
 import '../components/passwordTextField.dart';
 import '../components/myButton.dart';
@@ -15,6 +18,7 @@ class LoginPage extends StatelessWidget {
       // backgroundColor: Colors.red,
       body: SafeArea(
           child: Container(
+
               // height: double.maxFinite,
               height: double.infinity,
               // height: 690,
@@ -94,17 +98,27 @@ class LoginPage extends StatelessWidget {
                         height: 24,
                       ),
                       MyButton(
+                        title: 'Login',
                         onTap: handelSignIn,
                       ),
                       const SizedBox(
                         height: 16,
                       ),
                       RichText(
-                          text: const TextSpan(
+                          text: TextSpan(
                               text: 'Do have an account? ',
                               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                               children: <TextSpan>[
                             TextSpan(
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => RegisterPage(),
+                                      ),
+                                    );
+                                  },
                                 text: 'Register',
                                 style: TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold))
                           ])),

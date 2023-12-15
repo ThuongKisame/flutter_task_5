@@ -1,21 +1,8 @@
 import 'package:flutter/material.dart';
 
-class PasswordTextField extends StatefulWidget {
+class MyTextField extends StatelessWidget {
   final String? hintText;
-  const PasswordTextField({Key? key, this.hintText}) : super(key: key);
-
-  @override
-  State<PasswordTextField> createState() => _PasswordTextFieldState();
-}
-
-class _PasswordTextFieldState extends State<PasswordTextField> {
-  bool _obscureText = true;
-
-  void _togglePasswordVisibility() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
-  }
+  const MyTextField({super.key, this.hintText});
 
   @override
   Widget build(BuildContext context) {
@@ -29,27 +16,17 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
         ),
       ),
       child: TextField(
-        obscureText: _obscureText,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.all(Radius.circular(100)),
-          ),
+              borderSide: BorderSide(color: Colors.white), borderRadius: BorderRadius.all(Radius.circular(100))),
           focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey.shade400),
               borderRadius: BorderRadius.all(Radius.circular(100))),
           fillColor: Colors.grey.shade200,
           hintStyle: TextStyle(color: Colors.grey[500]),
           filled: true,
-          hintText: widget.hintText ?? '',
-          suffixIcon: GestureDetector(
-            onTap: _togglePasswordVisibility,
-            child: Icon(
-              _obscureText ? Icons.visibility : Icons.visibility_off,
-              color: Colors.green,
-            ),
-          ),
+          hintText: hintText ?? '',
         ),
       ),
     );
