@@ -1,27 +1,43 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_task_5/components/myCheckBox.dart';
+import 'package:flutter_task_5/components/my_text_field.dart';
+import 'package:flutter_task_5/functions/validate_form.dart';
 import 'package:flutter_task_5/pages/register_page.dart';
 
 import '../components/passwordTextField.dart';
 import '../components/myButton.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
 
-  void handelSignIn() {}
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  void handleLogin() {
+    final userNameError =
+        userNameController.text.isEmpty ? 'This field is required' : Validator.userName(userNameController.text);
+
+    final passwordError =
+        passwordController.text.isEmpty ? 'This field is required' : Validator.password(passwordController.text);
+
+    if (userNameError != null || passwordError != null) {
+      // show err
+    } else {
+      // Nếu không có lỗi, thực hiện đăng nhập
+      log(userNameController.text);
+      log(passwordController.text);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.red,
       body: SafeArea(
           child: Container(
-
-              // height: double.maxFinite,
               height: double.infinity,
-              // height: 690,
               width: double.infinity,
               color: Colors.black,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 100),
@@ -44,32 +60,11 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(
                         height: 30,
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(
-                            color: Colors.green,
-                            width: 2.0,
-                          ),
-                        ),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                            enabledBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white),
-                                borderRadius: BorderRadius.all(Radius.circular(100))),
-                            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade400)),
-                            fillColor: Colors.grey.shade200,
-                            hintStyle: TextStyle(color: Colors.grey[500]),
-                            filled: true,
-                          ),
-                        ),
-                      ),
+                      MyTextField(hintText: 'User name', controller: userNameController, validate: Validator.userName),
                       const SizedBox(
                         height: 16,
                       ),
-                      const PasswordTextField(),
+                      PasswordTextField(controller: passwordController, validate: Validator.password),
                       const SizedBox(
                         height: 8,
                       ),
@@ -99,7 +94,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       MyButton(
                         title: 'Login',
-                        onTap: handelSignIn,
+                        onTap: handleLogin,
                       ),
                       const SizedBox(
                         height: 16,

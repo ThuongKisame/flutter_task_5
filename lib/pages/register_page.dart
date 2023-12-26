@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_task_5/components/dropdown_button.dart';
@@ -6,13 +9,42 @@ import 'package:flutter_task_5/components/myCheckBox.dart';
 import 'package:flutter_task_5/components/my_text_field.dart';
 import 'package:flutter_task_5/components/passwordTextField.dart';
 import 'package:flutter_task_5/components/radio_gender.dart';
+import 'package:flutter_task_5/functions/validate_form.dart';
 import 'package:flutter_task_5/pages/login.dart';
+import 'package:flutter_task_5/services/auth.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
 
-  void handelSignIn() {
-    print(selectedDropdownValue);
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  void handleRegister() {
+    // validate
+
+    final userNameError =
+        userNameController.text.isEmpty ? 'This field is required' : Validator.userName(userNameController.text);
+
+    final passwordError =
+        passwordController.text.isEmpty ? 'This field is required' : Validator.password(passwordController.text);
+
+    final nameError = nameController.text.isEmpty ? 'This field is required' : Validator.name(nameController.text);
+
+    final emailError = emailController.text.isEmpty ? 'This field is required' : Validator.email(emailController.text);
+
+    if (userNameError != null || passwordError != null || nameError != null || emailError != null) {
+      // show err
+    } else {
+      // Nếu không có lỗi, thực hiện đăng nhập
+
+      final String hashed = BCrypt.hashpw(passwordController.text, BCrypt.gensalt());
+
+      Auth.registerUser(
+          username: userNameController.text, password: hashed, email: emailController.text, name: nameController.text);
+      log(hashed);
+    }
   }
 
   List<String> dropdownOptions = ['VN', 'SN', 'CN'];
@@ -43,8 +75,6 @@ class RegisterPage extends StatelessWidget {
           color: Colors.black,
         ),
         child: Container(
-          // height: double.infinity,
-          // constraints: BoxConstraints(minHeight: double.infinity),
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -64,25 +94,33 @@ class RegisterPage extends StatelessWidget {
                 height: 30,
               ),
               MyTextField(
-                hintText: 'Full name',
+                hintText: 'Name',
+                controller: nameController,
+                validate: Validator.name,
               ),
               const SizedBox(
                 height: 16,
               ),
               MyTextField(
                 hintText: 'User name',
+                controller: userNameController,
+                validate: Validator.userName,
               ),
               const SizedBox(
                 height: 16,
               ),
               MyTextField(
+                controller: emailController,
                 hintText: 'Email',
+                validate: Validator.email,
               ),
               const SizedBox(
                 height: 16,
               ),
-              const PasswordTextField(
+              PasswordTextField(
+                controller: passwordController,
                 hintText: 'Password',
+                validate: Validator.password,
               ),
               const SizedBox(
                 height: 16,
@@ -190,7 +228,7 @@ class RegisterPage extends StatelessWidget {
               ),
               MyButton(
                 title: 'Register',
-                onTap: handelSignIn,
+                onTap: handleRegister,
               ),
               const SizedBox(
                 height: 16,
