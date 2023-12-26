@@ -6,7 +6,7 @@ class Validator {
       return 'Length should be between 1 and 30 characters';
     } else if (value.contains(RegExp(r'[!@#%^&*(),.?":{}|<>]'))) {
       return 'Special characters are not allowed';
-    } else if (value.contains(RegExp(r'[^\x00-\x7F]'))) {
+    } else if (value.contains(RegExp(r'[^\x00-\x7F\u0111\u0110\u00E0-\u1EF3]+'))) {
       return 'Emoji is not allowed';
     } else if (value.contains(' ')) {
       return 'Whitespace is not allowed';
@@ -32,7 +32,7 @@ class Validator {
   static String? name(String value) {
     if (value.isEmpty) {
       return 'Please enter a name';
-    } else if (value.contains(RegExp(r'[^\x00-\x7F]'))) {
+    } else if (value.contains(RegExp(r'[^\x00-\x7F\u0111\u0110\u00E0-\u1EF3]+'))) {
       return 'Emoji is not allowed';
     }
 
