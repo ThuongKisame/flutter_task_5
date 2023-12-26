@@ -31,4 +31,13 @@ class Auth {
       log('Error: $error');
     }
   }
+
+  static register({required String username, required String password, required String email, required String name}) {
+    final url = Uri.parse('${baseUrl}auth/register?locale=en');
+    return http.post(
+      url,
+      body: jsonEncode({'username': username, 'password': password, 'email': email, 'name': name}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
 }

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_task_5/components/dialogs.dart';
 import 'package:flutter_task_5/components/dropdown_button.dart';
 import 'package:flutter_task_5/components/myButton.dart';
 import 'package:flutter_task_5/components/myCheckBox.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_task_5/components/my_text_field.dart';
 import 'package:flutter_task_5/components/passwordTextField.dart';
 import 'package:flutter_task_5/components/radio_gender.dart';
 import 'package:flutter_task_5/functions/validate_form.dart';
+import 'package:flutter_task_5/pages/home_page.dart';
 import 'package:flutter_task_5/pages/login.dart';
 import 'package:flutter_task_5/services/auth.dart';
 
@@ -21,7 +23,7 @@ class RegisterPage extends StatelessWidget {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  void handleRegister() {
+  Future<void> handleRegister(BuildContext context) async {
     // validate
 
     final userNameError =
@@ -41,9 +43,34 @@ class RegisterPage extends StatelessWidget {
 
       final String hashed = BCrypt.hashpw(passwordController.text, BCrypt.gensalt());
 
-      Auth.registerUser(
-          username: userNameController.text, password: hashed, email: emailController.text, name: nameController.text);
-      log(hashed);
+      try {
+        Dialogs.showProgressBar(context);
+        final response = await Auth.register(
+            username: userNameController.text,
+            password: hashed,
+            email: emailController.text,
+            name: nameController.text);
+        if (response.statusCode == 200) {
+          log('Registration successful');
+          Navigator.pop(context);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
+        } else {
+          Navigator.pop(context);
+          Dialogs.showSnackbar(context, '${response.body}');
+          log('Registration failed: ${response.statusCode}, ${response.body}');
+        }
+      } catch (error) {
+        Navigator.pop(context);
+        Dialogs.showSnackbar(context, '${error}');
+
+        log('Error: $error');
+      }
     }
   }
 
@@ -228,7 +255,9 @@ class RegisterPage extends StatelessWidget {
               ),
               MyButton(
                 title: 'Register',
-                onTap: handleRegister,
+                onTap: () {
+                  handleRegister(context);
+                },
               ),
               const SizedBox(
                 height: 16,
