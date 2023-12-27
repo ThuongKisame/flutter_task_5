@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_task_5/components/myCheckBox.dart';
-import 'package:flutter_task_5/components/my_text_field.dart';
-import 'package:flutter_task_5/functions/validate_form.dart';
-import 'package:flutter_task_5/pages/register_page.dart';
+import 'package:flutter_task_5/widgets/my_check_box.dart';
+import 'package:flutter_task_5/widgets/my_text_field.dart';
+import 'package:flutter_task_5/utils/validate_form.dart';
+import 'package:flutter_task_5/screens/register_screen.dart';
 
-import '../components/passwordTextField.dart';
-import '../components/myButton.dart';
+import '../widgets/password_text_field.dart';
+import '../widgets/my_button.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});

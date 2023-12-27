@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'pages/login.dart';
+import 'screens/login_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load();
+  print(dotenv.env['BASE_URL']);
+
   runApp(const MyApp());
 }
 

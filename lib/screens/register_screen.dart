@@ -1,19 +1,14 @@
-import 'dart:developer';
-
-import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_task_5/components/dialogs.dart';
-import 'package:flutter_task_5/components/dropdown_button.dart';
-import 'package:flutter_task_5/components/myButton.dart';
-import 'package:flutter_task_5/components/myCheckBox.dart';
-import 'package:flutter_task_5/components/my_text_field.dart';
-import 'package:flutter_task_5/components/passwordTextField.dart';
-import 'package:flutter_task_5/components/radio_gender.dart';
-import 'package:flutter_task_5/functions/validate_form.dart';
-import 'package:flutter_task_5/pages/home_page.dart';
-import 'package:flutter_task_5/pages/login.dart';
-import 'package:flutter_task_5/services/auth.dart';
+import 'package:flutter_task_5/functions/auth_functions.dart';
+import 'package:flutter_task_5/widgets/dropdown_button.dart';
+import 'package:flutter_task_5/widgets/my_button.dart';
+import 'package:flutter_task_5/widgets/my_check_box.dart';
+import 'package:flutter_task_5/widgets/my_text_field.dart';
+import 'package:flutter_task_5/widgets/password_text_field.dart';
+import 'package:flutter_task_5/widgets/gender_radio.dart';
+import 'package:flutter_task_5/utils/validate_form.dart';
+import 'package:flutter_task_5/screens/login_screen.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
@@ -22,57 +17,6 @@ class RegisterPage extends StatelessWidget {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
-  Future<void> handleRegister(BuildContext context) async {
-    // validate
-
-    final userNameError =
-        userNameController.text.isEmpty ? 'This field is required' : Validator.userName(userNameController.text);
-
-    final passwordError =
-        passwordController.text.isEmpty ? 'This field is required' : Validator.password(passwordController.text);
-
-    final nameError = nameController.text.isEmpty ? 'This field is required' : Validator.name(nameController.text);
-
-    final emailError = emailController.text.isEmpty ? 'This field is required' : Validator.email(emailController.text);
-
-    if (userNameError != null || passwordError != null || nameError != null || emailError != null) {
-      // show err
-    } else {
-      // Nếu không có lỗi, thực hiện đăng nhập
-
-      final String hashed = BCrypt.hashpw(passwordController.text, BCrypt.gensalt());
-
-      try {
-        Dialogs.showProgressBar(context);
-        final response = await Auth.register(
-            username: userNameController.text,
-            password: hashed,
-            email: emailController.text,
-            name: nameController.text);
-        if (response.statusCode == 200) {
-          log('Registration successful');
-          Navigator.pop(context);
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(),
-            ),
-          );
-        } else {
-          Navigator.pop(context);
-          Dialogs.showSnackbar(context, '${response.body}');
-          log('Registration failed: ${response.statusCode}, ${response.body}');
-        }
-      } catch (error) {
-        Navigator.pop(context);
-        Dialogs.showSnackbar(context, '${error}');
-
-        log('Error: $error');
-      }
-    }
-  }
 
   List<String> dropdownOptions = ['VN', 'SN', 'CN'];
 
@@ -161,26 +105,10 @@ class RegisterPage extends StatelessWidget {
                     width: 2.0,
                   ),
                 ),
-
                 child: Row(
                   children: [
                     CustomDropdown(
                         options: dropdownOptions, selectedValue: dropdownOptions[0], onChanged: handleDropdownChange),
-                    // TextField(
-                    //   decoration: InputDecoration(
-                    //     contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
-                    //     enabledBorder: const OutlineInputBorder(
-                    //         borderSide: BorderSide(color: Colors.white),
-                    //         borderRadius: BorderRadius.all(Radius.circular(100))),
-                    //     focusedBorder: OutlineInputBorder(
-                    //         borderSide: BorderSide(color: Colors.grey.shade400),
-                    //         borderRadius: BorderRadius.all(Radius.circular(100))),
-                    //     fillColor: Colors.grey.shade200,
-                    //     hintStyle: TextStyle(color: Colors.grey[500]),
-                    //     filled: true,
-                    //     hintText: 'Phone number',
-                    //   ),
-                    // )
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
@@ -200,20 +128,6 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                // child: TextField(
-                //   decoration: InputDecoration(
-                //     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                //     enabledBorder: const OutlineInputBorder(
-                //         borderSide: BorderSide(color: Colors.white), borderRadius: BorderRadius.all(Radius.circular(100))),
-                //     focusedBorder: OutlineInputBorder(
-                //         borderSide: BorderSide(color: Colors.grey.shade400),
-                //         borderRadius: BorderRadius.all(Radius.circular(100))),
-                //     fillColor: Colors.grey.shade200,
-                //     hintStyle: TextStyle(color: Colors.grey[500]),
-                //     filled: true,
-                //     hintText: hintText ?? '',
-                //   ),
-                // ),
               ),
               const SizedBox(
                 height: 16,
@@ -256,7 +170,11 @@ class RegisterPage extends StatelessWidget {
               MyButton(
                 title: 'Register',
                 onTap: () {
-                  handleRegister(context);
+                  AuthFunctions.handleRegister(context,
+                      username: userNameController.text,
+                      password: passwordController.text,
+                      email: emailController.text,
+                      name: nameController.text);
                 },
               ),
               const SizedBox(

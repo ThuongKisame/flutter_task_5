@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class Auth {
-  static const String baseUrl = 'https://fe05.stechvn.org/api/';
+  static String baseUrl = dotenv.env['BASE_URL'] ?? '';
+
   static Future<void> registerUser(
       {required String username, required String password, required String email, required String name}) async {
     final url = Uri.parse('${baseUrl}auth/register?locale=en');
@@ -13,7 +15,7 @@ class Auth {
     log('Password: $password');
     log('Email: $email');
     log('Name: $name');
-    log('Name: $url');
+    log('BaseUrl: $url');
 
     try {
       final response = await http.post(
