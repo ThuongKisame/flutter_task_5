@@ -1,8 +1,9 @@
 import 'dart:developer';
 
 import 'package:bcrypt/bcrypt.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_task_5/services/auth.dart';
+import 'package:flutter_task_5/services/auth_services.dart';
 import 'package:flutter_task_5/utils/validate_form.dart';
 import 'package:flutter_task_5/widgets/dialogs.dart';
 
@@ -31,6 +32,7 @@ class AuthFunctions {
       try {
         Dialogs.showProgressBar(context);
         final response = await Auth.register(username: username, password: hashed, email: email, name: name);
+        log('log here');
         if (response.statusCode == 200) {
           log('Registration successful');
           Navigator.pop(context);
@@ -43,16 +45,22 @@ class AuthFunctions {
               builder: (context) => HomePage(),
             ),
           );
-        } else {
-          Navigator.pop(context);
-          Dialogs.showSnackbar(context, '${response.body}');
-          log('Registration failed: ${response.statusCode}, ${response.body}');
         }
-      } catch (error) {
-        Navigator.pop(context);
-        Dialogs.showSnackbar(context, '${error}');
+      } on DioError catch (e) {
+        if (e.response != null) {
+          print('Dio error!');
+          print('STATUS: ${e.response?.statusCode}');
+          print('DATA: ${e.response?.data}');
+          print('HEADERS: ${e.response?.headers}');
+          String log = '${e.response?.data}';
 
-        log('Error: $error');
+          Navigator.pop(context);
+          Dialogs.showSnackbar(context, log);
+        } else {
+          print('Error sending request!');
+          Navigator.pop(context);
+          Dialogs.showSnackbar(context, 'Error sending request!');
+        }
       }
     }
   }
